@@ -19,9 +19,8 @@
 
 🚀 **Explore DeLTa Live:**
 
-👉 https://agents-principles-flickr-andrews.trycloudflare.com/
+👉 https://frontend-blond-nine-72.vercel.app/ 
 
-> ⚠️ The current public URL uses a Cloudflare tunnel and may become unavailable when the tunnel is stopped or restarted.
 
 ---
 
