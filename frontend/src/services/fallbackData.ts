@@ -154,13 +154,67 @@ export const FALLBACK_GLACIERS = [
     front_position: { lat: -66.2, lon: -60.5 },
     historical_baseline_front: { lat: -66.18, lon: -60.48 },
     velocity_m_per_day: 2.4,
+    velocity_km_per_year: 0.88,
     acceleration_m_per_day2: 0.05,
+    acceleration_status: "BASELINE_EQUILIBRIUM",
     retreat_distance_m: 120.0,
     calving_activity: "NORMAL_ABLATION",
     estimated_ice_loss_rate_gt_yr: 18.5,
     trend: "STEADY",
     confidence: 0.93,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    scenarios: [
+      {
+        scenario_name: "Baseline Scenario (Current Climate Trend)",
+        description: "Continuation of 2015-2025 decadal thermal and ocean circulation patterns.",
+        annual_ice_loss_range_gt: [12.0, 22.0],
+        retreat_velocity_range_m_yr: [836, 1012],
+        estimated_shelf_destabilization_window_years: [35.0, 50.0],
+        confidence: 0.89
+      },
+      {
+        scenario_name: "Accelerated Warming Scenario (+1.5°C Ocean Thermal Forcing)",
+        description: "Enhanced Modified Circumpolar Deep Water (MCDW) intrusion beneath the floating ice shelf.",
+        annual_ice_loss_range_gt: [25.0, 45.0],
+        retreat_velocity_range_m_yr: [1188, 1540],
+        estimated_shelf_destabilization_window_years: [18.0, 28.0],
+        confidence: 0.82
+      },
+      {
+        scenario_name: "High-Change Structural Collapse Scenario",
+        description: "Unpinning from seafloor bathymetric highs followed by runaway marine ice cliff instability (MICI).",
+        annual_ice_loss_range_gt: [50.0, 85.0],
+        retreat_velocity_range_m_yr: [1936, 3080],
+        estimated_shelf_destabilization_window_years: [6.0, 14.0],
+        confidence: 0.74
+      }
+    ],
+    downstream_hazards: [
+      {
+        hazard_type: "Iceberg / Calving Navigation Hazard",
+        severity: "MEDIUM",
+        probability: "MEDIUM",
+        time_horizon: "Immediate (0-24 hours)",
+        downstream_impact_summary: "Fresh tabular icebergs and semi-submerged growlers dispersed across inshore navigation track. Standoff buffer advised.",
+        recommended_action: "Maintain minimum 25 NM buffer from Larsen C calving front coordinates."
+      },
+      {
+        hazard_type: "Calving Impact Displacement Wave",
+        severity: "LOW",
+        probability: "LOW",
+        time_horizon: "Transient (0-2 hours post-calving)",
+        downstream_impact_summary: "Localized surge waves (3m - 7m crest) originating at calving front. Extreme danger for small craft and shallow anchorages.",
+        recommended_action: "Suspend small craft operations within 15 km of active ice front."
+      },
+      {
+        hazard_type: "Ice-Shelf Structural Fracture & Fast Ice Destabilization",
+        severity: "MEDIUM",
+        probability: "LOW",
+        time_horizon: "Short-term (1-7 days)",
+        downstream_impact_summary: "Loss of front buttressing triggers adjacent rift propagation. Shorefast ice breakout may trap vessels in narrow coastal sounds.",
+        recommended_action: "Evacuate field science camps on fast ice; clear inshore shelf anchorages."
+      }
+    ]
   },
   {
     glacier_id: "GLACIER_BRUNT_ICE_SHELF",
@@ -168,13 +222,51 @@ export const FALLBACK_GLACIERS = [
     front_position: { lat: -75.55, lon: -26.8 },
     historical_baseline_front: { lat: -75.52, lon: -26.75 },
     velocity_m_per_day: 1.8,
+    velocity_km_per_year: 0.66,
     acceleration_m_per_day2: 0.02,
+    acceleration_status: "BASELINE_EQUILIBRIUM",
     retreat_distance_m: 65.0,
     calving_activity: "WATCH",
     estimated_ice_loss_rate_gt_yr: 8.2,
     trend: "STABLE",
     confidence: 0.89,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    scenarios: [
+      {
+        scenario_name: "Baseline Scenario (Current Ice Stream Flow)",
+        description: "Standard McDonald Ice Rumples deformation with stable seasonal grounding.",
+        annual_ice_loss_range_gt: [6.0, 12.0],
+        retreat_velocity_range_m_yr: [620, 760],
+        estimated_shelf_destabilization_window_years: [40.0, 60.0],
+        confidence: 0.91
+      },
+      {
+        scenario_name: "Accelerated Rift Widening (Chasm 1 Extension)",
+        description: "Continued tip propagation of Chasm 1 toward Halloween Crack junction.",
+        annual_ice_loss_range_gt: [15.0, 28.0],
+        retreat_velocity_range_m_yr: [950, 1300],
+        estimated_shelf_destabilization_window_years: [12.0, 20.0],
+        confidence: 0.85
+      },
+      {
+        scenario_name: "High-Change Major Calving Release",
+        description: "Complete detachment of Brunt North ice section (tabular berg >1200 km²).",
+        annual_ice_loss_range_gt: [35.0, 65.0],
+        retreat_velocity_range_m_yr: [1500, 2400],
+        estimated_shelf_destabilization_window_years: [4.0, 8.0],
+        confidence: 0.78
+      }
+    ],
+    downstream_hazards: [
+      {
+        hazard_type: "Halley VI Approach Channel Obstruction",
+        severity: "MEDIUM",
+        probability: "LOW",
+        time_horizon: "Medium-term (1-4 weeks)",
+        downstream_impact_summary: "Tabular ice fragments may block seasonal relief ship mooring sites at Creek 2 and Atka Bay.",
+        recommended_action: "Monitor Sentinel-1 SAR interferograms weekly before committing supply vessel."
+      }
+    ]
   }
 ];
 
