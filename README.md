@@ -1,54 +1,119 @@
 # ❄️ DeLTa — Antarctic Intelligence Platform
 
-### AI-Powered Polar Navigation & Cryosphere Hazard Intelligence
+<p align="center">
 
-> **Observe. Understand. Predict. Navigate.**
+# 🧊 DeLTa
 
-DeLTa is an AI-powered decision-support platform for Antarctic marine navigation and cryosphere hazard intelligence.
+### **Dynamic Environmental & Logistics / Navigation Intelligence Agent**
 
-It brings together environmental monitoring, satellite/imagery analysis, glacier hazard assessment, multi-factor risk scoring, dynamic route planning, early-warning alerts, and human-in-the-loop decision making into a single operational system.
+**AI-Powered Antarctic Navigation & Cryosphere Hazard Intelligence**
+
+<br>
+
+<a href="https://agents-principles-flickr-andrews.trycloudflare.com/">
+  <img src="https://img.shields.io/badge/🚀%20LIVE%20DEMO-OPEN%20DeLTa-00C7FF?style=for-the-badge" alt="Live Demo">
+</a>
+
+<a href="https://github.com/somjoymukherjee/delta-polar-navigation-agent">
+  <img src="https://img.shields.io/badge/GITHUB-REPOSITORY-181717?style=for-the-badge&logo=github" alt="GitHub">
+</a>
+
+<br><br>
+
+**Observe → Understand → Predict → Plan → Act → Monitor**
+
+</p>
 
 ---
 
-## 🚀 Live Demo
+# 🌍 What is DeLTa?
 
-### 🌐 [Open DeLTa Live](https://agents-principles-flickr-andrews.trycloudflare.com/)
+DeLTa is an AI-powered decision-support platform designed for **Antarctic marine navigation and cryosphere hazard intelligence**.
 
-> Explore the DeLTa operational dashboard directly in your browser.
+The system brings multiple sources of environmental intelligence together and transforms them into an operational decision workflow.
 
-**Note:** The live demo is currently exposed through a temporary Cloudflare tunnel. Environmental observations shown in the application are explicitly marked as `DEMO` where applicable and should not be interpreted as live Antarctic satellite measurements.
+Instead of simply displaying:
+
+> "There is more sea ice."
+
+or:
+
+> "The glacier is moving faster."
+
+DeLTa attempts to connect those observations to the operational question:
+
+> **"What does this change mean for navigation and environmental risk, and what should the operator consider doing next?"**
+
+The platform combines:
+
+- 🚢 Polar route planning
+- 🛰️ Satellite and environmental perception
+- 🧊 Sea-ice monitoring
+- 🧊 Iceberg detection
+- 🏔️ Glacier and ice-shelf monitoring
+- ⚠️ Hazard assessment
+- 📊 Multi-factor risk scoring
+- 🗺️ Dynamic route re-evaluation
+- 🚨 Early-warning alerts
+- 🧠 AI-assisted reasoning
+- 👤 Human-in-the-loop decisions
+- 📝 Persistent audit logging
+- 🔄 Autonomous observation-to-decision cycles
 
 ---
 
-# 🧭 What DeLTa Does
+# 🚀 Try DeLTa Live
 
-DeLTa helps an operator understand changing Antarctic conditions and make better-informed navigation decisions.
+## 🌐 Live Application
+
+### 👉 [OPEN THE DeLTa LIVE DEMO](https://agents-principles-flickr-andrews.trycloudflare.com/)
+
+The live demonstration exposes the operational dashboard through a temporary public tunnel.
+
+You can explore the different intelligence modules, inspect environmental conditions, trigger demonstration scenarios, observe risk changes, review route recommendations, and inspect the audit trail.
+
+> ⚠️ **Important:** The current demonstration uses explicitly labelled `DEMO` data/simulation where applicable. The live URL does not imply that the application is receiving real-time Antarctic satellite observations.
+
+---
+
+# 🧭 The Core Idea
+
+The entire DeLTa system can be understood through one continuous pipeline:
 
 ```text
-🛰️ ENVIRONMENTAL DATA
-          │
-          ▼
-     👁️ OBSERVE
-          │
-          ▼
-     🧠 PERCEIVE
-          │
-          ▼
-     🔄 COMPARE
-          │
-          ▼
-      💡 REASON
-          │
-          ▼
-     ⚠️ ASSESS RISK
-          │
-          ▼
-       🗺️ PLAN
-          │
-          ▼
-   🚨 ACT / RECOMMEND
-          │
-          ▼
-      📊 MONITOR
-          │
-          └──────────────► 🔄 CONTINUE
+                    🌎 ENVIRONMENT
+                         │
+                         ▼
+                 🛰️ DATA / OBSERVATIONS
+                         │
+                         ▼
+                    👁️ OBSERVE
+                         │
+                         ▼
+                    🧠 PERCEIVE
+                         │
+                         ▼
+                    🔄 COMPARE
+                         │
+                         ▼
+                     💡 REASON
+                         │
+                         ▼
+                   ⚠️ ASSESS RISK
+                         │
+                         ▼
+                      🗺️ PLAN
+                         │
+                         ▼
+                  🚨 ACT / RECOMMEND
+                         │
+                         ▼
+                    👤 OPERATOR
+                         │
+                         ▼
+                    📝 AUDIT
+                         │
+                         ▼
+                    📊 MONITOR
+                         │
+                         └───────────────► 🔄
