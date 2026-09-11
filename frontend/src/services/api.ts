@@ -225,9 +225,21 @@ export const api = {
 
   getRiskGrid: async (): Promise<any[]> => {
     return safeFetch<any[]>(`${API_BASE}/risk/grid`, undefined, [
-      { lat: -64.8, lon: -63.5, total_risk_score: 18.2, level: "LOW", ice_risk: 12.0, iceberg_risk: 14.0 },
-      { lat: -65.5, lon: -60.0, total_risk_score: localStage === 2 ? 84.5 : (localStage === 1 ? 62.0 : 38.0), level: localStage === 2 ? "CRITICAL" : (localStage === 1 ? "WARNING" : "MODERATE"), ice_risk: 45.0, iceberg_risk: 52.0 },
-      { lat: -67.0, lon: -55.0, total_risk_score: 24.5, level: "LOW", ice_risk: 18.0, iceberg_risk: 20.0 }
+      {
+        cell_id: "GRID_GERLACHE",
+        bounds: { min_lat: -65.5, max_lat: -64.2, min_lon: -64.0, max_lon: -62.0 },
+        risk: { overall_score: 18.2, primary_driver: "Open Pack Ice", factors: { sea_ice_risk: 12.0 } }
+      },
+      {
+        cell_id: "GRID_LARSEN_FRONT",
+        bounds: { min_lat: -66.5, max_lat: -65.2, min_lon: -61.5, max_lon: -58.5 },
+        risk: { overall_score: localStage === 2 ? 84.5 : (localStage === 1 ? 62.0 : 38.0), primary_driver: localStage === 2 ? "Catastrophic Calving Blockage" : "Katabatic Compression", factors: { iceberg_risk: localStage === 2 ? 88.0 : 35.0 } }
+      },
+      {
+        cell_id: "GRID_WEDDELL_BASIN",
+        bounds: { min_lat: -68.5, max_lat: -66.5, min_lon: -56.0, max_lon: -50.0 },
+        risk: { overall_score: 24.5, primary_driver: "Open Swell", factors: { weather_risk: 22.0 } }
+      }
     ]);
   },
 

@@ -175,8 +175,9 @@ export const PolarMap: React.FC<PolarMapProps> = ({
     // 4. Render Risk Heatmap Grid
     if (showHeatmap && riskGrid?.length) {
       riskGrid.forEach((cell: any) => {
-        const b = cell.bounds;
-        const score = cell.risk.overall_score;
+        const b = cell?.bounds;
+        if (!b || typeof b.min_lat !== 'number') return;
+        const score = cell?.risk?.overall_score ?? cell?.total_risk_score ?? 0;
         let fillColor = '#10b981'; // safe
         if (score > 80) fillColor = '#ef4444'; // extreme
         else if (score > 60) fillColor = '#f97316'; // high
@@ -190,10 +191,9 @@ export const PolarMap: React.FC<PolarMapProps> = ({
           fillOpacity: 0.18
         }).bindPopup(`
           <div class="text-xs font-sans p-1">
-            <p class="font-semibold text-slate-100">Risk Grid: <span class="font-mono">${cell.cell_id}</span></p>
+            <p class="font-semibold text-slate-100">Risk Grid: <span class="font-mono">${cell.cell_id || 'CELL'}</span></p>
             <p class="text-sm font-bold font-mono" style="color: ${fillColor}">Risk Score: ${score}/100</p>
-            <p class="text-slate-300 mt-1">Driver: ${cell.risk.primary_driver}</p>
-            <p class="text-[10px] text-slate-400">${cell.risk.explanation}</p>
+            <p class="text-slate-300 mt-1">Driver: ${cell?.risk?.primary_driver || 'Environmental'}</p>
           </div>
         `);
         layers.heatmap.addLayer(poly);
