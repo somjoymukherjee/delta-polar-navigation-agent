@@ -19,7 +19,7 @@
 
 🚀 **Explore DeLTa Live:**
 
-👉 https://frontend-blond-nine-72.vercel.app/ 
+👉 https://frontend-blond-nine-72.vercel.app/
 
 
 ---
