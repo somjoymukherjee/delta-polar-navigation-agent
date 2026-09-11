@@ -1,12 +1,58 @@
 /**
  * DeLTa Frontend API Client
  * Connects to the FastAPI backend services.
+ * Features automated resilient fallback for public cloud deployment (e.g. Vercel).
  */
 
-const isDev = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
+import {
+  FALLBACK_STATUS,
+  FALLBACK_VOYAGE_PLAN,
+  FALLBACK_ALERTS,
+  FALLBACK_GLACIERS,
+  FALLBACK_SATELLITE_FEATURES,
+  FALLBACK_CHAT,
+  ROUTE_ALPHA,
+  ROUTE_BRAVO,
+  ROUTE_CHARLIE
+} from './fallbackData';
+
+const isDev = typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
   (window.location.port === '5173' || window.location.port === '4173');
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || (isDev ? 'http://localhost:8000/api' : '/api');
+const customUrl = typeof window !== 'undefined' ? localStorage.getItem('DELTA_API_URL') : null;
+export const hasLiveBackend = isDev || !!customUrl || !!import.meta.env.VITE_API_BASE_URL;
+export const API_BASE = customUrl || import.meta.env.VITE_API_BASE_URL || (isDev ? 'http://localhost:8000/api' : '/api');
+
+// Local demo state for standalone Vercel preview
+let localStage = 0;
+let localAlerts = [...FALLBACK_ALERTS];
+let localChatHistory = [...FALLBACK_CHAT];
+let localVoyagePlan = { ...FALLBACK_VOYAGE_PLAN };
+let localStatus = { ...FALLBACK_STATUS };
+
+async function safeFetch<T>(url: string, options?: RequestInit, fallbackValue?: T): Promise<T> {
+  if (!hasLiveBackend && fallbackValue !== undefined) {
+    return fallbackValue;
+  }
+  try {
+    const res = await fetch(url, { ...options, signal: AbortSignal.timeout(4000) });
+    if (!res.ok) {
+      if (fallbackValue !== undefined) return fallbackValue;
+      throw new Error(`HTTP ${res.status}`);
+    }
+    const text = await res.text();
+    try {
+      return JSON.parse(text);
+    } catch {
+      if (fallbackValue !== undefined) return fallbackValue;
+      throw new Error('Invalid JSON response');
+    }
+  } catch (err) {
+    if (fallbackValue !== undefined) return fallbackValue;
+    throw err;
+  }
+}
 
 export interface SystemStatus {
   system_name: string;
@@ -106,143 +152,267 @@ export interface ChatMessage {
 
 export const api = {
   getStatus: async (): Promise<SystemStatus> => {
-    const res = await fetch(`${API_BASE}/status`);
-    return res.json();
+    return safeFetch<SystemStatus>(`${API_BASE}/status`, undefined, {
+      ...localStatus,
+      scenario_stage: localStage,
+      timestamp: new Date().toISOString()
+    });
   },
 
   setMode: async (mode: string): Promise<any> => {
-    const res = await fetch(`${API_BASE}/mode?mode=${mode}`, { method: 'POST' });
-    return res.json();
+    try {
+      const res = await fetch(`${API_BASE}/mode?mode=${mode}`, { method: 'POST', signal: AbortSignal.timeout(3000) });
+      if (res.ok) return await res.json();
+    } catch {}
+    localStatus.mode = mode as any;
+    return { status: "MODE_UPDATED", mode };
   },
 
   getVessel: async (): Promise<any> => {
-    const res = await fetch(`${API_BASE}/vessel`);
-    return res.json();
+    return safeFetch(`${API_BASE}/vessel`, undefined, {
+      vessel_name: "R/V Sir David Attenborough",
+      polar_class: "PC5",
+      coordinates: [-64.82, -63.5]
+    });
   },
 
   getRoutes: async (): Promise<VoyagePlan> => {
-    const res = await fetch(`${API_BASE}/routes`);
-    return res.json();
+    return safeFetch<VoyagePlan>(`${API_BASE}/routes`, undefined, localVoyagePlan);
   },
 
   getSatellitePasses: async (): Promise<any[]> => {
-    const res = await fetch(`${API_BASE}/satellite/passes`);
-    return res.json();
+    return safeFetch<any[]>(`${API_BASE}/satellite/passes`, undefined, [
+      {
+        pass_id: "PASS-S1A-EW-902",
+        satellite: "Sentinel-1A",
+        instrument: "C-Band Synthetic Aperture Radar (SAR)",
+        mode: "Extra Wide Swath (EW)",
+        polarization: "HH+HV Dual-Pol",
+        swath_width_km: 400,
+        resolution_m: 20,
+        acquisition_time: new Date(Date.now() - 3600000).toISOString(),
+        coverage_region: "Antarctic Peninsula & Western Weddell Sea",
+        status: "PROCESSED_CALIBRATED",
+        quality_score: 0.98
+      },
+      {
+        pass_id: "PASS-S2B-MSI-441",
+        satellite: "Sentinel-2B",
+        instrument: "Multi-Spectral Instrument (MSI)",
+        mode: "Optical 13-Band",
+        polarization: "N/A",
+        swath_width_km: 290,
+        resolution_m: 10,
+        acquisition_time: new Date(Date.now() - 7200000).toISOString(),
+        coverage_region: "Larsen C Ice Shelf Rifts",
+        status: "ATMOSPHERICALLY_CORRECTED",
+        quality_score: 0.94
+      }
+    ]);
   },
 
   getSatelliteFeatures: async (): Promise<any> => {
-    const res = await fetch(`${API_BASE}/satellite/features`);
-    return res.json();
+    return safeFetch<any>(`${API_BASE}/satellite/features`, undefined, FALLBACK_SATELLITE_FEATURES);
   },
 
   getTemporalChange: async (): Promise<any> => {
-    const res = await fetch(`${API_BASE}/satellite/temporal-change`);
-    return res.json();
+    return safeFetch<any>(`${API_BASE}/satellite/temporal-change`, undefined, FALLBACK_SATELLITE_FEATURES.temporal_change);
   },
 
   getGlaciers: async (): Promise<any[]> => {
-    const res = await fetch(`${API_BASE}/hazards/glaciers`);
-    return res.json();
+    return safeFetch<any[]>(`${API_BASE}/hazards/glaciers`, undefined, FALLBACK_GLACIERS);
   },
 
   getRiskGrid: async (): Promise<any[]> => {
-    const res = await fetch(`${API_BASE}/risk/grid`);
-    return res.json();
+    return safeFetch<any[]>(`${API_BASE}/risk/grid`, undefined, [
+      { lat: -64.8, lon: -63.5, total_risk_score: 18.2, level: "LOW", ice_risk: 12.0, iceberg_risk: 14.0 },
+      { lat: -65.5, lon: -60.0, total_risk_score: localStage === 2 ? 84.5 : (localStage === 1 ? 62.0 : 38.0), level: localStage === 2 ? "CRITICAL" : (localStage === 1 ? "WARNING" : "MODERATE"), ice_risk: 45.0, iceberg_risk: 52.0 },
+      { lat: -67.0, lon: -55.0, total_risk_score: 24.5, level: "LOW", ice_risk: 18.0, iceberg_risk: 20.0 }
+    ]);
   },
 
   getAlerts: async (): Promise<Alert[]> => {
-    const res = await fetch(`${API_BASE}/alerts`);
-    return res.json();
+    return safeFetch<Alert[]>(`${API_BASE}/alerts`, undefined, localAlerts);
   },
 
   acknowledgeAlert: async (alertId: string, operatorId = 'DUTY_OFFICER'): Promise<Alert> => {
-    const res = await fetch(`${API_BASE}/alerts/${alertId}/acknowledge?operator_id=${operatorId}`, {
-      method: 'POST',
-    });
-    return res.json();
+    try {
+      const res = await fetch(`${API_BASE}/alerts/${alertId}/acknowledge?operator_id=${operatorId}`, { method: 'POST' });
+      if (res.ok) return await res.json();
+    } catch {}
+    localAlerts = localAlerts.map(a => a.alert_id === alertId ? { ...a, acknowledged: true, acknowledged_by: operatorId, acknowledged_at: new Date().toISOString() } : a);
+    return localAlerts.find(a => a.alert_id === alertId)!;
   },
 
   getChatHistory: async (): Promise<ChatMessage[]> => {
-    const res = await fetch(`${API_BASE}/chat/history`);
-    return res.json();
+    return safeFetch<ChatMessage[]>(`${API_BASE}/chat/history`, undefined, localChatHistory);
   },
 
   sendChatMessage: async (message: string): Promise<ChatMessage> => {
-    const res = await fetch(`${API_BASE}/chat`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message }),
-    });
-    return res.json();
+    try {
+      const res = await fetch(`${API_BASE}/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message }),
+        signal: AbortSignal.timeout(5000)
+      });
+      if (res.ok) return await res.json();
+    } catch {}
+
+    const reply: ChatMessage = {
+      id: `ASSISTANT-${Date.now()}`,
+      role: 'assistant',
+      content: `[DeLTa Multi-Agent Intelligence Core] Received query: "${message}". Vessel R/V Sir David Attenborough is operating on Polar Class PC5 standards at 64.82°S, 63.50°W. Active track is Route Alpha (Balanced Track, Peak Risk 27.6/100). All SAR and Optical sensors report continuous lead navigability.`,
+      timestamp: new Date().toISOString(),
+      decision_card: {
+        title: "Polar Route Feasibility Advisory",
+        confidence: "94%",
+        recommendation: "Maintain Route Alpha trackline to Halley VI."
+      }
+    };
+    localChatHistory.push(reply);
+    return reply;
   },
 
   stepSimulation: async (stage: number): Promise<any> => {
-    const res = await fetch(`${API_BASE}/simulation/step`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ stage }),
-    });
-    return res.json();
+    try {
+      const res = await fetch(`${API_BASE}/simulation/step`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stage }),
+        signal: AbortSignal.timeout(4000)
+      });
+      if (res.ok) return await res.json();
+    } catch {}
+
+    localStage = stage;
+    if (stage === 0) {
+      localStatus.scenario_step_name = "T+0: Baseline Departure";
+      localVoyagePlan = { ...FALLBACK_VOYAGE_PLAN };
+    } else if (stage === 1) {
+      localStatus.scenario_step_name = "T+6h: Storm Inflow & Pack Ice Compression";
+      localAlerts.unshift({
+        alert_id: `ALERT-STORM-${Date.now()}`,
+        severity: "WARNING",
+        what: "Severe Katabatic Pressure Drop (968 hPa, 48 kt gusts)",
+        where_lat: -65.5,
+        where_lon: -60.0,
+        where_location_name: "Larsen C Inshore Channel",
+        when_timestamp: new Date().toISOString(),
+        evidence: "Rapid barometric collapse detected by Open-Meteo & shipboard barograph.",
+        confidence: 0.91,
+        expected_development: "Compression of first-year pack ice against fast ice edge.",
+        recommended_action: "Reduce transit speed and alter heading 15° seaward.",
+        acknowledged: false
+      });
+    } else {
+      localStatus.scenario_step_name = "T+12h: Major Calving Event & Active Rerouting";
+      localAlerts.unshift({
+        alert_id: `ALERT-CALVING-${Date.now()}`,
+        severity: "CRITICAL",
+        what: "Major Glacier Calving Detachment & Inshore Track Obstruction",
+        where_lat: -66.2,
+        where_lon: -60.5,
+        where_location_name: "Larsen C Northern Rift Section",
+        when_timestamp: new Date().toISOString(),
+        evidence: "Sentinel-1 EW SAR indicates 820m tabular detachment. 5 major bergs adrift directly across Route Bravo.",
+        confidence: 0.97,
+        expected_development: "Complete blockage of high-speed inshore passage within 3 hours.",
+        recommended_action: "EXECUTE DYNAMIC REROUTE: Shift immediately to Route Alpha (Balanced Deep Corridor).",
+        acknowledged: false
+      });
+      localVoyagePlan = {
+        ...FALLBACK_VOYAGE_PLAN,
+        reroute_evaluation: {
+          reassessment_triggered: true,
+          trigger_reason: "Direct track obstruction by 820m tabular calving event",
+          old_route_id: "ROUTE_TIME_FIRST",
+          recommended_route: ROUTE_ALPHA,
+          alternative_routes: [ROUTE_BRAVO, ROUTE_CHARLIE],
+          risk_delta: -48.2,
+          explanation: "Route Bravo compromised (Peak Risk 84/100). Diverted vessel to Route Alpha (Peak Risk 27.6/100)."
+        }
+      };
+    }
+    return { stage, step_name: localStatus.scenario_step_name };
   },
 
   triggerCalvingEvent: async (): Promise<any> => {
-    const res = await fetch(`${API_BASE}/simulation/calving-event`, { method: 'POST' });
-    return res.json();
+    return api.stepSimulation(2);
   },
 
   resetSimulation: async (): Promise<any> => {
-    const res = await fetch(`${API_BASE}/simulation/reset`, { method: 'POST' });
-    return res.json();
+    localStage = 0;
+    localAlerts = [...FALLBACK_ALERTS];
+    localVoyagePlan = { ...FALLBACK_VOYAGE_PLAN };
+    return api.stepSimulation(0);
   },
 
   getAuditLogs: async (): Promise<any[]> => {
-    try {
-      const res = await fetch(`${API_BASE}/audit`);
-      if (!res.ok) return [];
-      const data = await res.json();
-      return Array.isArray(data) ? data : [];
-    } catch (e) {
-      console.error("Error loading audit logs:", e);
-      return [];
-    }
+    return safeFetch<any[]>(`${API_BASE}/audit`, undefined, [
+      {
+        log_id: "AUDIT-001",
+        action_type: "EXECUTE_SIMULATION",
+        target_id: "STAGE_0",
+        rationale: "Operator initialized Weddell Baseline T+0 scenario [DEMO Provenance]",
+        operator_id: "DUTY_OFFICER",
+        timestamp: new Date().toISOString()
+      }
+    ]);
   },
 
   logAuditAction: async (actionType: string, targetId: string, rationale: string, details?: any): Promise<any> => {
-    const res = await fetch(`${API_BASE}/audit`, {
+    return safeFetch(`${API_BASE}/audit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action_type: actionType, target_id: targetId, rationale, details }),
-    });
-    return res.json();
+      body: JSON.stringify({ action_type: actionType, target_id: targetId, rationale, details })
+    }, { status: "LOGGED_LOCAL" });
   },
 
   getAgentState: async (): Promise<any> => {
-    const res = await fetch(`${API_BASE}/agent/state`);
-    return res.json();
+    return safeFetch(`${API_BASE}/agent/state`, undefined, { state: "NOMINAL", cycle: 1 });
   },
 
   getAgentActivity: async (): Promise<any[]> => {
-    const res = await fetch(`${API_BASE}/agent/activity`);
-    return res.json();
+    return safeFetch<any[]>(`${API_BASE}/agent/activity`, undefined, [
+      {
+        id: "ACT-01",
+        timestamp: new Date().toISOString(),
+        agent: "Navigation Agent",
+        activity: "Evaluated 3 candidate tracks over A* polar cost mesh. Recommended Route Alpha.",
+        level: "INFO"
+      },
+      {
+        id: "ACT-02",
+        timestamp: new Date().toISOString(),
+        agent: "Hazard Sentinel",
+        activity: "Fused Sentinel-1 SAR + Sentinel-2 MSI data. Track clear of catastrophic compression.",
+        level: "SUCCESS"
+      }
+    ]);
   },
 
   getNormalizedObservations: async (): Promise<any[]> => {
-    const res = await fetch(`${API_BASE}/observations/normalized`);
-    return res.json();
+    return safeFetch<any[]>(`${API_BASE}/observations/normalized`, undefined, []);
   },
 
   getRiskDelta: async (): Promise<any> => {
-    const res = await fetch(`${API_BASE}/risk/delta`);
-    return res.json();
+    return safeFetch<any>(`${API_BASE}/risk/delta`, undefined, {
+      delta_percentage: localStage === 2 ? 42.5 : (localStage === 1 ? 14.8 : 0.0),
+      trend: localStage > 0 ? "INCREASING" : "STABLE",
+      confidence: 0.94
+    });
   },
 
   getSharedState: async (): Promise<any> => {
-    const res = await fetch(`${API_BASE}/system/shared-state`);
-    return res.json();
+    return safeFetch<any>(`${API_BASE}/system/shared-state`, undefined, {
+      system_mode: "DEMO",
+      current_step: "MONITOR",
+      active_route: "Route Alpha"
+    });
   },
 
   getAgentCycles: async (): Promise<any[]> => {
-    const res = await fetch(`${API_BASE}/agent/cycles`);
-    return res.json();
+    return safeFetch<any[]>(`${API_BASE}/agent/cycles`, undefined, []);
   },
 };

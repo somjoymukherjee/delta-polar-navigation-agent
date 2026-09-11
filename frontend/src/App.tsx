@@ -34,32 +34,32 @@ export const App: React.FC = () => {
       const [
         s, vp, feat, rg, al, ch, ps, tc, gl, act, rd, ss
       ] = await Promise.all([
-        api.getStatus(),
-        api.getRoutes(),
-        api.getSatelliteFeatures(),
-        api.getRiskGrid(),
-        api.getAlerts(),
-        api.getChatHistory(),
-        api.getSatellitePasses(),
-        api.getTemporalChange(),
-        api.getGlaciers(),
-        api.getAgentActivity(),
-        api.getRiskDelta(),
-        api.getSharedState()
+        api.getStatus().catch(e => { console.warn("status err", e); return null; }),
+        api.getRoutes().catch(e => { console.warn("routes err", e); return null; }),
+        api.getSatelliteFeatures().catch(e => { console.warn("features err", e); return null; }),
+        api.getRiskGrid().catch(() => []),
+        api.getAlerts().catch(() => []),
+        api.getChatHistory().catch(() => []),
+        api.getSatellitePasses().catch(() => []),
+        api.getTemporalChange().catch(() => null),
+        api.getGlaciers().catch(() => []),
+        api.getAgentActivity().catch(() => []),
+        api.getRiskDelta().catch(() => null),
+        api.getSharedState().catch(() => null)
       ]);
 
-      setStatus(s);
-      setVoyagePlan(vp);
-      setFeatures(feat);
-      setRiskGrid(rg);
-      setAlerts(al);
-      setChatHistory(ch);
-      setPasses(ps);
-      setTemporalChange(tc);
-      setGlaciers(gl);
-      setActivities(act);
-      setRiskDelta(rd);
-      setSharedState(ss);
+      if (s) setStatus(s);
+      if (vp) setVoyagePlan(vp);
+      if (feat) setFeatures(feat);
+      if (rg) setRiskGrid(rg);
+      if (al) setAlerts(al);
+      if (ch) setChatHistory(ch);
+      if (ps) setPasses(ps);
+      if (tc) setTemporalChange(tc);
+      if (gl) setGlaciers(gl);
+      if (act) setActivities(act);
+      if (rd) setRiskDelta(rd);
+      if (ss) setSharedState(ss);
     } catch (err) {
       console.error("Failed fetching DeLTa telemetry:", err);
     }

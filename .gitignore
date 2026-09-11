@@ -1,0 +1,17 @@
+# Dependencies & Build
+node_modules/
+dist/
+frontend/dist/
+.vercel
+
+# Logs & Binaries
+cloudflared.exe
+tunnel.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.env
+
