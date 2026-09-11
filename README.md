@@ -4,116 +4,79 @@
 
 # 🧊 DeLTa
 
-### **Dynamic Environmental & Logistics / Navigation Intelligence Agent**
+### Dynamic Environmental & Logistics / Navigation Intelligence Agent
 
 **AI-Powered Antarctic Navigation & Cryosphere Hazard Intelligence**
 
 <br>
 
 <a href="https://agents-principles-flickr-andrews.trycloudflare.com/">
-  <img src="https://img.shields.io/badge/🚀%20LIVE%20DEMO-OPEN%20DeLTa-00C7FF?style=for-the-badge" alt="Live Demo">
+<img src="https://img.shields.io/badge/🚀%20LIVE%20DEMO-OPEN%20DeLTa-00C7FF?style=for-the-badge" alt="Live Demo">
 </a>
 
 <a href="https://github.com/somjoymukherjee/delta-polar-navigation-agent">
-  <img src="https://img.shields.io/badge/GITHUB-REPOSITORY-181717?style=for-the-badge&logo=github" alt="GitHub">
+<img src="https://img.shields.io/badge/💻%20SOURCE%20CODE-GITHUB-181717?style=for-the-badge&logo=github" alt="GitHub">
 </a>
 
 <br><br>
 
-**Observe → Understand → Predict → Plan → Act → Monitor**
+<img src="https://img.shields.io/badge/Backend-FastAPI-009688?style=flat-square">
+<img src="https://img.shields.io/badge/Frontend-React-61DAFB?style=flat-square&logo=react">
+<img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python">
+<img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript">
+<img src="https://img.shields.io/badge/Database-SQLite-003B57?style=flat-square&logo=sqlite">
+<img src="https://img.shields.io/badge/Testing-Pytest-0A9EDC?style=flat-square">
+
+<br><br>
+
+**Observe → Perceive → Compare → Reason → Assess Risk → Plan → Act → Monitor**
 
 </p>
 
 ---
 
-# 🌍 What is DeLTa?
+# 🚀 Live Demo
 
-DeLTa is an AI-powered decision-support platform designed for **Antarctic marine navigation and cryosphere hazard intelligence**.
-
-The system brings multiple sources of environmental intelligence together and transforms them into an operational decision workflow.
-
-Instead of simply displaying:
-
-> "There is more sea ice."
-
-or:
-
-> "The glacier is moving faster."
-
-DeLTa attempts to connect those observations to the operational question:
-
-> **"What does this change mean for navigation and environmental risk, and what should the operator consider doing next?"**
-
-The platform combines:
-
-- 🚢 Polar route planning
-- 🛰️ Satellite and environmental perception
-- 🧊 Sea-ice monitoring
-- 🧊 Iceberg detection
-- 🏔️ Glacier and ice-shelf monitoring
-- ⚠️ Hazard assessment
-- 📊 Multi-factor risk scoring
-- 🗺️ Dynamic route re-evaluation
-- 🚨 Early-warning alerts
-- 🧠 AI-assisted reasoning
-- 👤 Human-in-the-loop decisions
-- 📝 Persistent audit logging
-- 🔄 Autonomous observation-to-decision cycles
-
----
-
-# 🚀 Try DeLTa Live
-
-## 🌐 Live Application
+## 🌐 Try DeLTa
 
 ### 👉 [OPEN THE DeLTa LIVE DEMO](https://agents-principles-flickr-andrews.trycloudflare.com/)
 
-The live demonstration exposes the operational dashboard through a temporary public tunnel.
+The live demonstration exposes the DeLTa operational dashboard through a public Cloudflare tunnel.
 
-You can explore the different intelligence modules, inspect environmental conditions, trigger demonstration scenarios, observe risk changes, review route recommendations, and inspect the audit trail.
+Explore:
 
-> ⚠️ **Important:** The current demonstration uses explicitly labelled `DEMO` data/simulation where applicable. The live URL does not imply that the application is receiving real-time Antarctic satellite observations.
+- 🗺️ Polar Intelligence Map
+- 🚢 Dynamic Route Evaluation
+- 🛰️ Satellite & Environmental Perception
+- 🧊 Sea-Ice Monitoring
+- 🧊 Iceberg Detection
+- 🏔️ Glacier Hazard Intelligence
+- 🚨 Early-Warning Alerts
+- 🧠 AI Command Center
+- 📋 Activity Stream
+- 👤 Human-in-the-Loop Decisions
+- 📝 Persistent Audit Log
+- 🧪 Environmental Simulation
+
+> ⚠️ **Data Transparency:** The current demonstration uses explicitly labelled `DEMO` simulation/observational data where applicable. The public URL should not be interpreted as a real-time Antarctic satellite monitoring service.
+
+> ℹ️ The current live URL is exposed through a temporary Cloudflare tunnel and may become unavailable when the tunnel is stopped.
 
 ---
 
-# 🧭 The Core Idea
+# 🌍 1. What is DeLTa?
 
-The entire DeLTa system can be understood through one continuous pipeline:
+DeLTa is an AI-powered decision-support platform designed for **Antarctic marine navigation and cryosphere hazard intelligence**.
+
+The system combines environmental observations, satellite/imagery analysis, glacier monitoring, risk assessment, route planning, early-warning alerts, AI-assisted reasoning, and human decision-making into one operational workflow.
+
+Instead of presenting isolated information such as:
 
 ```text
-                    🌎 ENVIRONMENT
-                         │
-                         ▼
-                 🛰️ DATA / OBSERVATIONS
-                         │
-                         ▼
-                    👁️ OBSERVE
-                         │
-                         ▼
-                    🧠 PERCEIVE
-                         │
-                         ▼
-                    🔄 COMPARE
-                         │
-                         ▼
-                     💡 REASON
-                         │
-                         ▼
-                   ⚠️ ASSESS RISK
-                         │
-                         ▼
-                      🗺️ PLAN
-                         │
-                         ▼
-                  🚨 ACT / RECOMMEND
-                         │
-                         ▼
-                    👤 OPERATOR
-                         │
-                         ▼
-                    📝 AUDIT
-                         │
-                         ▼
-                    📊 MONITOR
-                         │
-                         └───────────────► 🔄
+Sea Ice → One Screen
+
+Weather → Another Screen
+
+Glacier → Another Screen
+
+Navigation → Another Screen
